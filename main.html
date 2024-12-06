@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interaktive Suche - Elektronegativität</title>
+    <style>
+        *{
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f4e7ff;
+        }
+
+        #label {
+            text-align: center;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        #search {
+            margin-bottom: 20px;
+            padding: 10px;
+            font-size: 16px;
+            width: 250px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+        }
+        .element {
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: fadeIn 0.5s forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+        #elementList {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+            position: absolute;
+            width: 25%;
+            margin: 0 auto;
+        }
+
+        #elementList li {
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin: 5px 0;
+    font-weight: bold;
+    background-color: #ac42ff;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.5s ease, transform 0.3s ease;
+}
+
+#elementList li:hover {
+    background-color: #8f00ff;
+    color: white;
+    transform: scale(1.05); /* Slight zoom-in effect on hover */
+}
+
+#result {
+    display: flex;
+    justify-content: space-around;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    position: absolute;
+    right: 2%;
+    width: 50%;
+    top: 20%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+#result h2{
+    color: rgb(23, 23, 23) !important;
+}
+
+#result.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+#compareResult {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    position: absolute;
+    width: 50%;
+    right: 2%;
+    top: 50%;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+#compareResult.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+        #result h2, #compareResult h3 {
+            color: #333;
+            font-size: 1rem ;
+        }
+
+        button {
+            background-color: #7400a6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #43025f;
+        }
+
+        div.element {
+            text-align: center;
+            margin: 10px;
+        }
+        
+        a img {
+    transition: transform 0.5s ease;
+    position: absolute;
+    bottom: 5%;
+    padding: 1%;
+    border-radius: 50%;
+    right: 5%;
+    background-color: transparent;
+}
+
+a:hover img {
+    transform: rotate(360deg); /* Optional spinning effect */
+}
+
+
+@media (max-width: 950px) {
+body{
+    margin: 0%;
+    padding: 0%;
+}
+    #result{
+        width: 90%;
+        text-align: center;
+        margin: 0% 5% 0% 5%;
+        padding: 0% 2%;
+        position: static;
+        max-width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #compareResult{
+        margin: 1% 5%;
+        position: static;
+        padding: 0% 5%;
+        width: 100%;
+        max-width: fit-content;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #compareResult h3{
+        font-size: 1.1rem;
+    }
+    #search {
+        width: 70%;
+        font-size: 14px;
+        margin: 0 auto;
+        display: block;
+    }
+
+    .element{
+        font-size: 1rem;
+    }
+
+    h1 {
+        font-size: 1.3rem;
+        color: #8f00ff;
+        margin-bottom: 10px;
+    }
+
+    #label {
+        font-size: 1rem;
+        font-weight: bold;
+        margin: 0% 0;
+        text-align: center;
+    }
+
+    #elementList {
+        width: 80%;
+        margin: 0% 10%;
+        padding: 0;
+        position: static;
+    }
+
+    #elementList li {
+        font-size: 0.9rem;
+    }
+
+    button {
+        width: 100%;
+        margin: 10px auto;
+    }
+
+
+    a img {
+        width: 20px;
+        position: static;
+        height: 20px;
+    }
+}
+
+
+
+    </style>
+</head>
+<body>
+
+    
+
+    <h1>Elektronegativität und Elektronegativitätsdifferenz</h1>
+    <div id="label">
+        <label for="search">Element suchen: </label>
+        <input type="text" id="search" oninput="filterElements()" placeholder="Gib ein Element ein...">
+    </div>
+
+    <ul id="elementList">
+        <!-- Listenelemente werden hier durch JavaScript dynamisch eingefügt -->
+    </ul>
+
+    <div id="result"></div>
+    <div id="compareResult"></div>
+
+    <a href="#" onclick="resetComparison()" title="Vergleich zurücksetzen">
+        <img src="reset.png" alt="Reset Button" style="width: 30px; height: 30px;">
+    </a>
+    
+    
+    
+
+    <script>
+        const electronegativity = {
+    H: { en: 2.20, atomicNumber: 1, atomicMass: 1.008, symbol: 'H', properties: ['Nichtmetall'] },
+    He: { en: 0.00, atomicNumber: 2, atomicMass: 4.0026, symbol: 'He', properties: ['Edelgas'] },
+    Li: { en: 0.98, atomicNumber: 3, atomicMass: 6.94, symbol: 'Li', properties: ['Alkalimetall'] },
+    Be: { en: 1.57, atomicNumber: 4, atomicMass: 9.0122, symbol: 'Be', properties: ['Erdalkalimetall'] },
+    B: { en: 2.04, atomicNumber: 5, atomicMass: 10.81, symbol: 'B', properties: ['Halbmetall'] },
+    C: { en: 2.55, atomicNumber: 6, atomicMass: 12.01, symbol: 'C', properties: ['Nichtmetall'] },
+    N: { en: 3.04, atomicNumber: 7, atomicMass: 14.01, symbol: 'N', properties: ['Nichtmetall'] },
+    O: { en: 3.44, atomicNumber: 8, atomicMass: 16.00, symbol: 'O', properties: ['Nichtmetall'] },
+    F: { en: 3.98, atomicNumber: 9, atomicMass: 19.00, symbol: 'F', properties: ['Halogen'] },
+    Ne: { en: 0.00, atomicNumber: 10, atomicMass: 20.18, symbol: 'Ne', properties: ['Edelgas'] },
+    Na: { en: 0.93, atomicNumber: 11, atomicMass: 22.99, symbol: 'Na', properties: ['Alkalimetall'] },
+    Mg: { en: 1.31, atomicNumber: 12, atomicMass: 24.31, symbol: 'Mg', properties: ['Erdalkalimetall'] },
+    Al: { en: 1.61, atomicNumber: 13, atomicMass: 26.98, symbol: 'Al', properties: ['Metall'] },
+    Si: { en: 1.90, atomicNumber: 14, atomicMass: 28.09, symbol: 'Si', properties: ['Halbmetall'] },
+    P: { en: 2.19, atomicNumber: 15, atomicMass: 30.97, symbol: 'P', properties: ['Nichtmetall'] },
+    S: { en: 2.58, atomicNumber: 16, atomicMass: 32.07, symbol: 'S', properties: ['Nichtmetall'] },
+    Cl: { en: 3.16, atomicNumber: 17, atomicMass: 35.45, symbol: 'Cl', properties: ['Halogen'] },
+    Ar: { en: 0.00, atomicNumber: 18, atomicMass: 39.95, symbol: 'Ar', properties: ['Edelgas'] },
+    K: { en: 0.82, atomicNumber: 19, atomicMass: 39.10, symbol: 'K', properties: ['Alkalimetall'] },
+    Ca: { en: 1.00, atomicNumber: 20, atomicMass: 40.08, symbol: 'Ca', properties: ['Erdalkalimetall'] },
+    Sc: { en: 1.36, atomicNumber: 21, atomicMass: 44.96, symbol: 'Sc', properties: ['Übergangsmetall'] },
+    Ti: { en: 1.54, atomicNumber: 22, atomicMass: 47.87, symbol: 'Ti', properties: ['Übergangsmetall'] },
+    V: { en: 1.63, atomicNumber: 23, atomicMass: 50.94, symbol: 'V', properties: ['Übergangsmetall'] },
+    Cr: { en: 1.66, atomicNumber: 24, atomicMass: 51.99, symbol: 'Cr', properties: ['Übergangsmetall'] },
+    Mn: { en: 1.55, atomicNumber: 25, atomicMass: 54.94, symbol: 'Mn', properties: ['Übergangsmetall'] },
+    Fe: { en: 1.83, atomicNumber: 26, atomicMass: 55.85, symbol: 'Fe', properties: ['Übergangsmetall'] },
+    Co: { en: 1.88, atomicNumber: 27, atomicMass: 58.93, symbol: 'Co', properties: ['Übergangsmetall'] },
+    Ni: { en: 1.91, atomicNumber: 28, atomicMass: 58.69, symbol: 'Ni', properties: ['Übergangsmetall'] },
+    Cu: { en: 1.90, atomicNumber: 29, atomicMass: 63.55, symbol: 'Cu', properties: ['Übergangsmetall'] },
+    Zn: { en: 1.65, atomicNumber: 30, atomicMass: 65.38, symbol: 'Zn', properties: ['Übergangsmetall'] },
+    Ga: { en: 1.81, atomicNumber: 31, atomicMass: 69.72, symbol: 'Ga', properties: ['Metall'] },
+    Ge: { en: 2.01, atomicNumber: 32, atomicMass: 72.63, symbol: 'Ge', properties: ['Halbmetall'] },
+    As: { en: 2.18, atomicNumber: 33, atomicMass: 74.92, symbol: 'As', properties: ['Halbmetall'] },
+    Se: { en: 2.55, atomicNumber: 34, atomicMass: 78.96, symbol: 'Se', properties: ['Nichtmetall'] },
+    Br: { en: 2.96, atomicNumber: 35, atomicMass: 79.90, symbol: 'Br', properties: ['Halogen'] },
+    Kr: { en: 3.00, atomicNumber: 36, atomicMass: 83.80, symbol: 'Kr', properties: ['Edelgas'] }
+};
+
+
+
+let selectedElements = [];
+
+function filterElements() {
+    const searchQuery = document.getElementById('search').value.toLowerCase();
+    const elementList = document.getElementById('elementList');
+    elementList.innerHTML = '';
+
+    const filteredElements = Object.keys(electronegativity).filter(element =>
+        element.toLowerCase().includes(searchQuery)
+    );
+
+    filteredElements.forEach(element => {
+        const li = document.createElement('li');
+        li.textContent = element;
+        li.addEventListener('click', () => displayElementInfo(element));
+        elementList.appendChild(li);
+    });
+}
+
+function displayElementInfo(element) {
+    if (selectedElements.includes(element)) return;
+
+    const { en, atomicNumber, atomicMass, symbol, properties } = electronegativity[element];
+
+    if (selectedElements.length < 2) {
+        selectedElements.push(element);
+    }
+
+    const resultDiv = document.getElementById('result');
+    resultDiv.innerHTML = ''; // Clear previous results
+
+    selectedElements.forEach(selected => {
+        const { en, atomicNumber, atomicMass, symbol, properties } = electronegativity[selected];
+        const elementDiv = document.createElement('div');
+        elementDiv.classList.add('element');
+        elementDiv.innerHTML = `
+            <h2>${symbol} (${selected})</h2>
+            <p><strong>Elektronegativität:</strong> ${en}</p>
+            <p><strong>Ordnungszahl:</strong> ${atomicNumber}</p>
+            <p><strong>Atommasse:</strong> ${atomicMass} u</p>
+            <p><strong>Eigenschaften:</strong> ${properties.join(', ')}</p>
+        `;
+        resultDiv.appendChild(elementDiv);
+    });
+
+    resultDiv.classList.add('active'); // Smooth transition for result div
+
+    if (selectedElements.length === 2) {
+        const en1 = electronegativity[selectedElements[0]].en;
+        const en2 = electronegativity[selectedElements[1]].en;
+        const deltaEN = Math.abs(en1 - en2);
+
+        let bondType;
+        if (deltaEN < 0.5) {
+            bondType = 'Unpolar';
+        } else if (deltaEN < 1.7) {
+            bondType = 'Polar';
+        } else {
+            bondType = 'Ionisch';
+        }
+
+        let color = 'green';
+        if (bondType === 'Polar') color = 'yellow';
+        if (bondType === 'Ionisch') color = 'red';
+
+        const compareResultDiv = document.getElementById('compareResult');
+        compareResultDiv.innerHTML = `
+            <div>
+                <h3>Elektronegativitätsdifferenz von ${selectedElements[0]} und ${selectedElements[1]}</h3>
+                <p>ΔEN: ${deltaEN}</p>
+                <p>Bindungstyp: <strong>${bondType}</strong></p>
+            </div>
+        `;
+        compareResultDiv.style.backgroundColor = color;
+        compareResultDiv.classList.add('active'); // Smooth transition for comparison
+    }
+}
+
+function resetComparison() {
+    selectedElements = [];
+    document.getElementById('compareResult').innerHTML = '';
+    document.getElementById('result').innerHTML = '';
+    document.getElementById('result').classList.remove('active');
+    document.getElementById('compareResult').classList.remove('active');
+}
+
+
+    </script>
+</body>
+</html>
